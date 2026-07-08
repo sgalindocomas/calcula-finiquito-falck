@@ -1,5 +1,6 @@
 name = "calcula-finiquito-falck"
 compatibility_date = "2026-07-08"
+main = "index.html"
 
 [assets]
 directory = "./"
