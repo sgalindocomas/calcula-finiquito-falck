@@ -54,7 +54,7 @@
 
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-1">Vacaciones disfrutadas (días)</label>
-                <select id="vacaciones" onchange="actualizarJornadaExigida()" class="w-full border border-gray-300 rounded-lg p-3 bg-gray-50 focus:ring-red-500 focus:border-red-500 transition">
+                <select id="vacaciones" class="w-full border border-gray-300 rounded-lg p-3 bg-gray-50 focus:ring-red-500 focus:border-red-500 transition">
                     <option value="0">0 días</option>
                     <option value="9">9 días</option>
                     <option value="15">15 días</option>
@@ -67,14 +67,10 @@
             </div>
 
             <div id="seccion-especial" class="hidden space-y-4 p-4 bg-gray-50 rounded-xl border border-gray-200 fade-in">
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1">Días de baja por IT</label>
-                    <input type="number" id="dias_it" placeholder="Ej. 30" value="0" min="0" max="175" onchange="actualizarJornadaExigida()" class="w-full border border-gray-300 rounded-lg p-2.5 bg-white text-sm focus:ring-red-500 focus:border-red-500 transition">
-                </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Vacaciones 2025 disfrutadas en 2026 (días)</label>
-                        <input type="number" id="vacaciones_2025_disfrutadas" placeholder="Ej. 10" value="0" min="0" onchange="actualizarJornadaExigida()" class="w-full border border-gray-300 rounded-lg p-2.5 bg-white text-sm focus:ring-red-500 focus:border-red-500 transition">
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Días de baja por IT</label>
+                        <input type="number" id="dias_it" placeholder="Ej. 30" value="0" min="0" max="175" class="w-full border border-gray-300 rounded-lg p-2.5 bg-white text-sm focus:ring-red-500 focus:border-red-500 transition">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-1">Vacaciones 2025 pendientes (días)</label>
@@ -83,12 +79,26 @@
                 </div>
             </div>
 
-            <div>
-                <label id="label-horas" class="block text-sm font-bold text-gray-700 mb-1">
-                    Horas de jornada reales <span id="jornada-exigida" class="text-xs font-normal text-red-600 ml-1"></span>
-                </label>
-                <input type="number" id="horas" placeholder="Ej. 850" class="w-full border border-gray-300 rounded-lg p-3 bg-gray-50 focus:ring-red-500 focus:border-red-500 transition">
-                <p class="text-xs text-gray-500 mt-1.5 font-medium">Recuerda sumar las horas de formación.</p>
+            <div class="flex items-center gap-2 pt-1">
+                <input type="checkbox" id="has_variables" onchange="toggleSeccionVariables()" class="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500 cursor-pointer">
+                <label for="has_variables" class="text-sm font-semibold text-gray-700 cursor-pointer select-none">¿Quieres añadir conceptos variables (horas extras, festivos...)?</label>
+            </div>
+
+            <div id="seccion-variables" class="hidden space-y-4 p-4 bg-gray-50 rounded-xl border border-gray-200 fade-in">
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="flex items-end text-[11px] font-bold text-gray-700 mb-1 leading-tight h-8">H. ordinarias (extras)</label>
+                        <input type="number" id="horas_ordinarias" placeholder="0" value="0" min="0" class="w-full border border-gray-300 rounded-lg p-2 bg-white text-sm focus:ring-red-500 focus:border-red-500 transition">
+                    </div>
+                    <div>
+                        <label class="flex items-end text-[11px] font-bold text-gray-700 mb-1 leading-tight h-8">H. domingo</label>
+                        <input type="number" id="horas_domingo" placeholder="0" value="0" min="0" class="w-full border border-gray-300 rounded-lg p-2 bg-white text-sm focus:ring-red-500 focus:border-red-500 transition">
+                    </div>
+                    <div>
+                        <label class="flex items-end text-[11px] font-bold text-gray-700 mb-1 leading-tight h-8">H. festivo no local (24/06)</label>
+                        <input type="number" id="horas_festivo" placeholder="0" value="0" min="0" class="w-full border border-gray-300 rounded-lg p-2 bg-white text-sm focus:ring-red-500 focus:border-red-500 transition">
+                    </div>
+                </div>
             </div>
 
             <button type="button" onclick="procesarCalculo()" class="w-full bg-red-600 text-white font-bold text-lg py-3.5 rounded-lg hover:bg-red-700 shadow-md hover:shadow-lg transition duration-200 mt-2">
@@ -151,24 +161,19 @@
                 </div>
             </div>
 
-            <!-- Excedente Horario -->
-            <div class="border-b border-gray-100 py-1.5">
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center gap-1.5">
-                        <span>Excedente Horario</span>
-                        <button type="button" onclick="toggleFormula('formula-excedente')" class="focus:outline-none" title="Ver fórmula">
-                            <svg class="w-4 h-4 text-gray-400 hover:text-red-600 transition duration-150" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    <span id="out_excedente" class="font-bold text-gray-800"></span>
+            <!-- Conceptos Variables (Ordinarias, Domingos, Festivos) -->
+            <div id="row_variables" class="border-b border-gray-100 py-1.5 hidden">
+                <div class="flex justify-between items-center mb-1.5">
+                    <span>Conceptos Variables</span>
+                    <span id="out_variables" class="font-bold text-gray-800"></span>
                 </div>
-                <div id="formula-excedente" class="hidden mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-600 leading-relaxed">
-                    <p class="font-semibold text-gray-700 mb-1">Fórmula:</p>
-                    <code id="excedente-formula-code" class="block bg-gray-100 p-1.5 rounded mb-1 text-[10px] font-mono text-red-600">(Horas Reales - Jornada Exigida) × Precio Hora</code>
-                    <p id="excedente-formula-desc" class="mb-1"><strong>Jornada Exigida:</strong> <code>Math.round(((175 - Vacaciones) / 335) × 1635)</code>.</p>
-                    <p><strong>Precio Hora:</strong> Tarifa según convenio asignada a tu categoría y trienios.</p>
+                <div id="formula-variables" class="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-600 leading-relaxed">
+                    <p class="font-semibold text-gray-700 mb-1">Detalle de conceptos variables:</p>
+                    <ul class="list-disc list-inside space-y-1 text-gray-600">
+                        <li id="detail_h_ordinarias">Horas ordinarias (extras): 0,00 €</li>
+                        <li id="detail_h_domingo">Horas domingo: 0,00 €</li>
+                        <li id="detail_h_festivo">Horas festivo: 0,00 €</li>
+                    </ul>
                 </div>
             </div>
 
@@ -187,7 +192,7 @@
                 </div>
                 <div id="formula-convenio" class="hidden mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-600 leading-relaxed">
                     <p class="font-semibold text-gray-700 mb-1">Fórmula:</p>
-                    <code class="block bg-gray-100 p-1.5 rounded mb-1 text-[10px] font-mono text-red-600">(Paga Extra + Vacaciones + Excedente) × 4,04%</code>
+                    <code id="convenio-formula-code" class="block bg-gray-100 p-1.5 rounded mb-1 text-[10px] font-mono text-red-600">(Paga Extra + Vacaciones) × 4,04%</code>
                     <p>Porcentaje de incremento provisional pactado en el convenio aplicado sobre la suma de los conceptos anteriores.</p>
                 </div>
             </div>
@@ -242,35 +247,48 @@
         function toggleSeccionEspecial() {
             const hasIT = document.getElementById('has_it').checked;
             const seccion = document.getElementById('seccion-especial');
-            const labelHoras = document.getElementById('label-horas');
             
             if (hasIT) {
                 seccion.classList.remove('hidden');
-                labelHoras.innerHTML = 'Horas reales en período de alta <span id="jornada-exigida" class="text-xs font-normal text-red-600 ml-1"></span>';
             } else {
                 seccion.classList.add('hidden');
-                labelHoras.innerHTML = 'Horas de jornada reales <span id="jornada-exigida" class="text-xs font-normal text-red-600 ml-1"></span>';
                 // Reset inputs when unchecked
                 document.getElementById('dias_it').value = 0;
-                document.getElementById('vacaciones_2025_disfrutadas').value = 0;
                 document.getElementById('vacaciones_2025_pendientes').value = 0;
             }
-            actualizarJornadaExigida();
+        }
+
+        function toggleSeccionVariables() {
+            const hasVariables = document.getElementById('has_variables').checked;
+            const seccion = document.getElementById('seccion-variables');
+            
+            if (hasVariables) {
+                seccion.classList.remove('hidden');
+            } else {
+                seccion.classList.add('hidden');
+                // Reset inputs when unchecked
+                document.getElementById('horas_ordinarias').value = 0;
+                document.getElementById('horas_domingo').value = 0;
+                document.getElementById('horas_festivo').value = 0;
+            }
         }
 
         function procesarCalculo() {
             const categoriaKey = document.getElementById('categoria').value;
             const trienios = document.getElementById('trienios').value;
             const vacaciones = parseInt(document.getElementById('vacaciones').value);
-            const horas = parseFloat(document.getElementById('horas').value);
             
             const hasIT = document.getElementById('has_it').checked;
             const diasIT = hasIT ? (parseInt(document.getElementById('dias_it').value) || 0) : 0;
-            const vacaciones2025Disfrutadas = hasIT ? (parseInt(document.getElementById('vacaciones_2025_disfrutadas').value) || 0) : 0;
             const vacaciones2025Pendientes = hasIT ? (parseInt(document.getElementById('vacaciones_2025_pendientes').value) || 0) : 0;
 
-            if(!categoriaKey || isNaN(horas)) {
-                alert("Por favor, selecciona tu categoría profesional e introduce las horas de jornada reales.");
+            const hasVariables = document.getElementById('has_variables').checked;
+            const hOrdinarias = hasVariables ? (parseFloat(document.getElementById('horas_ordinarias').value) || 0) : 0;
+            const hDomingo = hasVariables ? (parseFloat(document.getElementById('horas_domingo').value) || 0) : 0;
+            const hFestivo = hasVariables ? (parseFloat(document.getElementById('horas_festivo').value) || 0) : 0;
+
+            if(!categoriaKey) {
+                alert("Por favor, selecciona tu categoría profesional.");
                 return;
             }
 
@@ -289,14 +307,14 @@
             const valorDia = (datosCategoria.salario_base + datosCategoria.comp_formacion + plusAntiguedad + jsonSalarial.conceptos_comunes.plus_asistencia_puntualidad) / 30;
             const totalVacaciones = vacacionesALiquidar * valorDia;
 
-            // 3. Excedente
-            const diasNoVacacionales = Math.max(0, 175 - vacaciones - vacaciones2025Disfrutadas - diasIT);
-            const jornadaARealizar = Math.round((diasNoVacacionales / 335) * 1635);
-            const horasExcedente = horas - jornadaARealizar;
-            const totalExcedente = horasExcedente * precioHora;
+            // 3. Conceptos variables
+            const totalHOrdinarias = hOrdinarias * precioHora;
+            const totalHDomingo = hDomingo * 0.61;
+            const totalHFestivo = hFestivo * 3.11;
+            const totalVariables = totalHOrdinarias + totalHDomingo + totalHFestivo;
 
             // 4. A cuenta convenio
-            const sumaAnteriores = pagaExtraInvierno + totalVacaciones + totalExcedente;
+            const sumaAnteriores = pagaExtraInvierno + totalVacaciones + totalVariables;
             const aCuentaConvenio = sumaAnteriores * 0.0404;
 
             // 5. Total Final
@@ -307,12 +325,25 @@
             
             document.getElementById('out_pagaExtra').innerText = formatoEuro.format(pagaExtraInvierno);
             document.getElementById('out_vacaciones').innerText = formatoEuro.format(totalVacaciones);
-            document.getElementById('out_excedente').innerText = formatoEuro.format(totalExcedente);
             document.getElementById('out_convenio').innerText = formatoEuro.format(aCuentaConvenio);
             document.getElementById('totalFiniquito').innerText = formatoEuro.format(finiquitoTotal);
+
+            // Conceptos variables row visibility and content
+            const rowVariables = document.getElementById('row_variables');
+            if (totalVariables > 0) {
+                rowVariables.classList.remove('hidden');
+                document.getElementById('out_variables').innerText = formatoEuro.format(totalVariables);
+                document.getElementById('detail_h_ordinarias').innerHTML = `Horas ordinarias (extras): <strong>${hOrdinarias} h</strong> × ${formatoEuro.format(precioHora)} = <strong>${formatoEuro.format(totalHOrdinarias)}</strong>`;
+                document.getElementById('detail_h_domingo').innerHTML = `Horas domingo: <strong>${hDomingo} h</strong> × 0,61 € = <strong>${formatoEuro.format(totalHDomingo)}</strong>`;
+                document.getElementById('detail_h_festivo').innerHTML = `Horas festivo no local (24/06): <strong>${hFestivo} h</strong> × 3,11 € = <strong>${formatoEuro.format(totalHFestivo)}</strong>`;
+                document.getElementById('convenio-formula-code').innerText = `(Paga Extra + Vacaciones + Variables) × 4,04%`;
+            } else {
+                rowVariables.classList.add('hidden');
+                document.getElementById('convenio-formula-code').innerText = `(Paga Extra + Vacaciones) × 4,04%`;
+            }
             
             // Actualizar explicaciones de fórmulas en base a si tiene IT/Vacaciones 2025
-            if (hasIT && (diasIT > 0 || vacaciones2025Disfrutadas > 0 || vacaciones2025Pendientes > 0)) {
+            if (hasIT && (diasIT > 0 || vacaciones2025Pendientes > 0)) {
                 // Paga Extra
                 if (diasIT > 0) {
                     document.getElementById('paga-formula-code').innerText = `50% × (Salario Base + Compl. Formación + Trienios) × ((175 - ${diasIT} días IT) / 175)`;
@@ -328,18 +359,11 @@
                     descVac += ` + ${vacaciones2025Pendientes} pendientes de 2025`;
                 }
                 descVac += ` = ${vacacionesALiquidar.toFixed(2)} días a liquidar</code>.`;
-                if (vacaciones2025Disfrutadas > 0) {
-                    descVac += `<br><em>Nota: Los ${vacaciones2025Disfrutadas} días de vacaciones de 2025 disfrutados en 2026 no restan del saldo de 2026.</em>`;
-                }
                 if (diasIT > 0) {
                     descVac += `<br><em>Nota: Las vacaciones se siguen devengando normalmente durante los días de baja por IT (${diasIT} días).</em>`;
                 }
                 document.getElementById('vacaciones-formula-code').innerText = `Días Pendientes a Liquidar (${vacacionesALiquidar.toFixed(2)}) × Valor Día`;
                 document.getElementById('vacaciones-formula-desc').innerHTML = descVac;
-
-                // Excedente
-                document.getElementById('excedente-formula-code').innerText = `(Horas Reales en Alta - Jornada Exigida) × Precio Hora`;
-                document.getElementById('excedente-formula-desc').innerHTML = `<strong>Jornada Exigida:</strong> <code>Math.round(((175 - ${vacaciones} vac. 2026 - ${vacaciones2025Disfrutadas} vac. 2025 - ${diasIT} días IT) / 335) × 1635) = ${jornadaARealizar} h</code>. Al haber estado en situación de baja por IT o haber disfrutado de vacaciones de 2025 en 2026, la jornada exigida se reduce proporcionalmente para no penalizar el cálculo.`;
             } else {
                 // Restaurar fórmulas por defecto
                 document.getElementById('paga-formula-code').innerText = `50% × (Salario Base + Compl. Formación + Trienios)`;
@@ -347,9 +371,6 @@
 
                 document.getElementById('vacaciones-formula-code').innerText = `Días Pendientes × Valor Día`;
                 document.getElementById('vacaciones-formula-desc').innerHTML = `<strong>Días Pendientes:</strong> <code>(175 días trab. / 365) × 30 - Días disfrutados</code> (aprox. 14,38 días generados).`;
-
-                document.getElementById('excedente-formula-code').innerText = `(Horas Reales - Jornada Exigida) × Precio Hora`;
-                document.getElementById('excedente-formula-desc').innerHTML = `<strong>Jornada Exigida:</strong> <code>Math.round(((175 - Vacaciones) / 335) × 1635) = ${jornadaARealizar} h</code>.`;
             }
 
             // Transición de vistas (Ocultar formulario, mostrar resultado)
@@ -363,17 +384,7 @@
             document.getElementById('vista-formulario').classList.remove('hidden');
         }
 
-        function actualizarJornadaExigida() {
-            const vacaciones = parseInt(document.getElementById('vacaciones').value) || 0;
-            const hasIT = document.getElementById('has_it').checked;
-            const diasIT = hasIT ? (parseInt(document.getElementById('dias_it').value) || 0) : 0;
-            const vacaciones2025 = hasIT ? (parseInt(document.getElementById('vacaciones_2025_disfrutadas').value) || 0) : 0;
-            
-            const diasNoVacacionales = 175 - vacaciones - vacaciones2025 - diasIT;
-            const diasCalculo = Math.max(0, diasNoVacacionales);
-            const jornadaARealizar = Math.round((diasCalculo / 335) * 1635);
-            document.getElementById('jornada-exigida').innerText = `(jornada exigida: ${jornadaARealizar} h)`;
-        }
+
 
         function toggleFormula(id) {
             const el = document.getElementById(id);
@@ -388,8 +399,7 @@
             }
         }
 
-        // Inicializar la jornada exigida al cargar la página
-        window.addEventListener('DOMContentLoaded', actualizarJornadaExigida);
+
     </script>
 </body>
 </html>
